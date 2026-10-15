@@ -1,41 +1,30 @@
 @{
-    ViewData["Title"] = "Panel Principal";
+    ViewData["Title"] = "Panel de Gestión de SIGALE";
 }
 
-<div class="row align-items-center mb-4 g-3">
-    <div class="col-lg-8">
-        <h1 class="h2 fw-bold text-dark mb-1">
-            <i class="bi bi-grid-fill text-primary me-2"></i>Panel de Gestión de Tablas
-        </h1>
-        <p class="text-muted mb-0">
-            Bienvenido al sistema SIGALE. Utiliza el <strong>menú hamburguesa</strong> superior o selecciona directamente una de las tablas a continuación para acceder a su CRUD.
-        </p>
-    </div>
-    <div class="col-lg-4 text-lg-end">
-        <button class="btn btn-sigale shadow-sm px-3 py-2 fw-semibold" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
-            <i class="bi bi-list me-1"></i> Abrir Menú Hamburguesa
-        </button>
-    </div>
+<div class="mb-4">
+    <h1 class="h2 fw-bold text-dark mb-0">
+        Panel de Gestión de SIGALE
+    </h1>
 </div>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
     <!-- 1. Roles -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle me-3">
-                        <i class="bi bi-shield-lock fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-shield-lock fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Roles</h5>
-                        <small class="text-muted">Esquema auth</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Roles</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Gestión de roles de permisos para el acceso y privilegios de usuarios en el sistema.
                 </p>
-                <a asp-controller="Roles" asp-action="Index" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                <a asp-controller="Roles" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Roles
                 </a>
             </div>
@@ -44,21 +33,20 @@
 
     <!-- 2. Usuarios -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle me-3">
-                        <i class="bi bi-people fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-people fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Usuarios</h5>
-                        <small class="text-muted">Esquema auth</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Usuarios</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Administración de estudiantes, instructores y miembros con sus datos institucionales.
                 </p>
-                <a asp-controller="Usuarios" asp-action="Index" class="btn btn-outline-success btn-sm w-100 mt-2">
+                <a asp-controller="Usuarios" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Usuarios
                 </a>
             </div>
@@ -67,21 +55,20 @@
 
     <!-- 3. Asociaciones -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle me-3">
-                        <i class="bi bi-building fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-building fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Asociaciones</h5>
-                        <small class="text-muted">Esquema clubs</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Asociaciones</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Clubs, ramas y asociaciones estudiantiles con información de fundación y formularios.
                 </p>
-                <a asp-controller="Asociaciones" asp-action="Index" class="btn btn-outline-info btn-sm w-100 mt-2">
+                <a asp-controller="Asociaciones" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Asociaciones
                 </a>
             </div>
@@ -90,21 +77,20 @@
 
     <!-- 4. Membresias -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle me-3">
-                        <i class="bi bi-person-badge fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-person-badge fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Membresías de Asociaciones</h5>
-                        <small class="text-muted">Esquema clubs</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Membresías de Asociaciones</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Registro y validación de membresías y cargos directivos en las distintas asociaciones.
                 </p>
-                <a asp-controller="MembresiaAsociaciones" asp-action="Index" class="btn btn-outline-warning btn-sm w-100 mt-2">
+                <a asp-controller="MembresiaAsociaciones" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Membresías
                 </a>
             </div>
@@ -113,21 +99,20 @@
 
     <!-- 5. Cursos -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-circle me-3">
-                        <i class="bi bi-journal-bookmark fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-journal-bookmark fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Cursos</h5>
-                        <small class="text-muted">Esquema courses</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Cursos</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Cursos y talleres extracurriculares ofrecidos, con horarios, cupos e instructores.
                 </p>
-                <a asp-controller="Cursos" asp-action="Index" class="btn btn-outline-danger btn-sm w-100 mt-2">
+                <a asp-controller="Cursos" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Cursos
                 </a>
             </div>
@@ -136,21 +121,20 @@
 
     <!-- 6. Inscripciones Cursos -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-secondary bg-opacity-10 text-secondary p-3 rounded-circle me-3">
-                        <i class="bi bi-clipboard-check fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-clipboard-check fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Inscripciones a Cursos</h5>
-                        <small class="text-muted">Esquema courses</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Inscripciones a Cursos</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Control de inscripciones de estudiantes a cursos, registro de notas y estado.
                 </p>
-                <a asp-controller="InscripcionCursos" asp-action="Index" class="btn btn-outline-secondary btn-sm w-100 mt-2">
+                <a asp-controller="InscripcionCursos" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Inscripciones
                 </a>
             </div>
@@ -159,21 +143,20 @@
 
     <!-- 7. Selecciones Deportivas -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle me-3">
-                        <i class="bi bi-trophy fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-trophy fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Selecciones Deportivas</h5>
-                        <small class="text-muted">Esquema sports</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Selecciones Deportivas</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Equipos deportivos representativos clasificados por disciplina y rama.
                 </p>
-                <a asp-controller="SeleccionesDeportivas" asp-action="Index" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                <a asp-controller="SeleccionesDeportivas" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Selecciones
                 </a>
             </div>
@@ -182,21 +165,20 @@
 
     <!-- 8. Participaciones Deportivas -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle me-3">
-                        <i class="bi bi-activity fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-activity fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Participaciones Deportivas</h5>
-                        <small class="text-muted">Esquema sports</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Participaciones Deportivas</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Atletas integrantes de las selecciones deportivas, modalidades e ingreso.
                 </p>
-                <a asp-controller="ParticipacionDeportiva" asp-action="Index" class="btn btn-outline-success btn-sm w-100 mt-2">
+                <a asp-controller="ParticipacionDeportiva" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Participaciones
                 </a>
             </div>
@@ -205,21 +187,20 @@
 
     <!-- 9. Categorías DAC -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle me-3">
-                        <i class="bi bi-tags fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-tags fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Categorías DAC</h5>
-                        <small class="text-muted">Esquema dac</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Categorías DAC</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Clasificación y rubros de las actividades culturales y de desarrollo estudiantil.
                 </p>
-                <a asp-controller="CategoriasDAC" asp-action="Index" class="btn btn-outline-info btn-sm w-100 mt-2">
+                <a asp-controller="CategoriasDAC" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Categorías DAC
                 </a>
             </div>
@@ -228,21 +209,20 @@
 
     <!-- 10. Actividades DAC -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-circle me-3">
-                        <i class="bi bi-calendar-event fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-calendar-event fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Actividades DAC</h5>
-                        <small class="text-muted">Esquema dac</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Actividades DAC</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Eventos, talleres y actividades organizadas con su categoría e instructor.
                 </p>
-                <a asp-controller="ActividadesDAC" asp-action="Index" class="btn btn-outline-danger btn-sm w-100 mt-2">
+                <a asp-controller="ActividadesDAC" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Actividades DAC
                 </a>
             </div>
@@ -251,21 +231,20 @@
 
     <!-- 11. Inscripciones DAC -->
     <div class="col">
-        <div class="card card-custom h-100 hover-shadow transition">
+        <div class="card card-custom h-100">
             <div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle me-3">
-                        <i class="bi bi-journal-check fs-3"></i>
+                    <div class="p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="background-color: var(--sigale-bg-bone); color: var(--sigale-dark); width: 56px; height: 56px;">
+                        <i class="bi bi-journal-check fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="card-title fw-bold mb-0">Inscripciones DAC</h5>
-                        <small class="text-muted">Esquema dac</small>
+                        <h5 class="card-title fw-bold mb-0 text-dark">Inscripciones DAC</h5>
                     </div>
                 </div>
                 <p class="card-text text-muted flex-grow-1 small">
                     Estudiantes participantes y registros de asistencia en actividades DAC.
                 </p>
-                <a asp-controller="InscripcionesDAC" asp-action="Index" class="btn btn-outline-warning btn-sm w-100 mt-2">
+                <a asp-controller="InscripcionesDAC" asp-action="Index" class="btn btn-sigale btn-sm w-100 mt-2">
                     <i class="bi bi-arrow-right-circle me-1"></i> Ir a Inscripciones DAC
                 </a>
             </div>

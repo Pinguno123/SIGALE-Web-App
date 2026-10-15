@@ -29,7 +29,7 @@ namespace SIGALE_Web_App.Controllers
                            c.Horario, c.CupoMaximo, c.Estado, c.CarnetInstructor, u.NombreCompleto AS NombreInstructor
                     FROM courses.Cursos c
                     LEFT JOIN auth.Usuarios u ON c.CarnetInstructor = u.Carnet
-                    ORDER BY c.IdCurso DESC";
+                    ORDER BY c.IdCurso ASC";
 
                 using (var command = new SqlCommand(query, connection))
                 using (var reader = await command.ExecuteReaderAsync())

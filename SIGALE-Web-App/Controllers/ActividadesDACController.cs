@@ -30,7 +30,7 @@ namespace SIGALE_Web_App.Controllers
                     FROM dac.ActividadesDAC a
                     INNER JOIN dac.CategoriasDAC c ON a.IdCategoria = c.IdCategoria
                     LEFT JOIN auth.Usuarios u ON a.CarnetInstructor = u.Carnet
-                    ORDER BY a.IdActividad DESC";
+                    ORDER BY a.IdActividad ASC";
 
                 using (var command = new SqlCommand(query, connection))
                 using (var reader = await command.ExecuteReaderAsync())

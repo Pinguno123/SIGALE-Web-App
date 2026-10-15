@@ -17,72 +17,192 @@
     <!-- Custom Site CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
+        :root {
+            --sigale-bg-light: #F2EFE9;
+            --sigale-bg-bone: #E9E5DC;
+            --sigale-gray-light: #BFBFBD;
+            --sigale-gray-mid: #8C8C8C;
+            --sigale-dark: #262626;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            background-color: var(--sigale-bg-light);
+            color: var(--sigale-dark);
         }
+
+        /* Top Navbar */
         .navbar-sigale {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background-color: var(--sigale-dark);
+            box-shadow: 0 4px 12px rgba(38, 38, 38, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        /* Offcanvas Sidebar */
         .offcanvas-sidebar {
-            background: #ffffff;
+            background-color: #ffffff;
             width: 320px;
+            border-right: 1px solid var(--sigale-gray-light);
+        }
+        .offcanvas-sidebar .offcanvas-header {
+            background-color: var(--sigale-bg-bone);
+            border-bottom: 1px solid var(--sigale-gray-light);
         }
         .sidebar-item {
             transition: all 0.2s ease;
             border-radius: 8px;
             margin-bottom: 4px;
             font-weight: 500;
-            color: #334155;
+            color: var(--sigale-dark);
             text-decoration: none;
             display: flex;
             align-items: center;
             padding: 10px 14px;
         }
         .sidebar-item:hover {
-            background-color: #f1f5f9;
-            color: #0284c7;
+            background-color: var(--sigale-bg-bone);
+            color: var(--sigale-dark);
             transform: translateX(4px);
         }
         .sidebar-item.active {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            font-weight: 600;
+            background-color: var(--sigale-bg-bone);
+            color: var(--sigale-dark);
+            font-weight: 700;
+            border-left: 4px solid var(--sigale-dark);
         }
         .sidebar-item i {
             font-size: 1.15rem;
             margin-right: 12px;
             width: 24px;
             text-align: center;
+            color: var(--sigale-gray-mid);
         }
+        .sidebar-item:hover i, .sidebar-item.active i {
+            color: var(--sigale-dark);
+        }
+
+        /* Card custom with palette */
         .card-custom {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--sigale-gray-light);
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(38, 38, 38, 0.04);
+            background-color: #ffffff;
         }
+
+        /* Primary action button */
         .btn-sigale {
-            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-            color: white;
-            border: none;
+            background-color: var(--sigale-dark);
+            color: #ffffff;
+            border: 1px solid var(--sigale-dark);
+            font-weight: 500;
         }
         .btn-sigale:hover {
-            background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
-            color: white;
+            background-color: #3f3f3f;
+            color: #ffffff;
+            border-color: #3f3f3f;
+        }
+
+        .btn-outline-sigale {
+            color: var(--sigale-dark);
+            border-color: var(--sigale-gray-mid);
+            background-color: transparent;
+        }
+        .btn-outline-sigale:hover {
+            background-color: var(--sigale-dark);
+            color: #ffffff;
+            border-color: var(--sigale-dark);
+        }
+
+        /* Modal Crear custom */
+        .modal-header-sigale {
+            background-color: var(--sigale-dark);
+            color: #ffffff;
+        }
+
+        /* Table styling with palette */
+        .table {
+            border-color: var(--sigale-bg-bone);
         }
         .table th {
-            background-color: #f8fafc;
+            background-color: var(--sigale-bg-bone);
             font-weight: 600;
-            color: #475569;
+            color: var(--sigale-dark);
             text-transform: uppercase;
             font-size: 0.78rem;
             letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--sigale-gray-light);
         }
         .table td {
             vertical-align: middle;
             font-size: 0.92rem;
+            border-color: #eeebe6;
+        }
+
+        /* Custom badge */
+        .badge-sigale {
+            background-color: var(--sigale-bg-bone);
+            color: var(--sigale-dark);
+            border: 1px solid var(--sigale-gray-light);
+        }
+
+        /* Search input with palette */
+        .input-group-text {
+            background-color: var(--sigale-bg-bone);
+            border-color: var(--sigale-gray-light);
+            color: var(--sigale-gray-mid);
+        }
+        .form-control, .form-select {
+            border-color: var(--sigale-gray-light);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--sigale-dark);
+            box-shadow: 0 0 0 0.2rem rgba(38, 38, 38, 0.15);
+        }
+
+        /* Pagination with palette */
+        .pagination .page-item.active .page-link {
+            background-color: var(--sigale-dark) !important;
+            border-color: var(--sigale-dark) !important;
+            color: #ffffff !important;
+        }
+        .pagination .page-link {
+            color: var(--sigale-dark);
+            border-color: var(--sigale-gray-light);
+        }
+        .pagination .page-link:hover {
+            background-color: var(--sigale-bg-bone);
+            color: var(--sigale-dark);
+        }
+
+        /* Neutral palette adaptations for non-alert elements (preserving yellow, green, and red alerts) */
+        .btn-primary {
+            background-color: var(--sigale-dark) !important;
+            border-color: var(--sigale-dark) !important;
+            color: #ffffff !important;
+        }
+        .btn-primary:hover {
+            background-color: #3f3f3f !important;
+            border-color: #3f3f3f !important;
+        }
+        .btn-outline-primary {
+            color: var(--sigale-dark) !important;
+            border-color: var(--sigale-gray-mid) !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--sigale-dark) !important;
+            border-color: var(--sigale-dark) !important;
+            color: #ffffff !important;
+        }
+        .bg-primary-subtle, .bg-info-subtle {
+            background-color: var(--sigale-bg-bone) !important;
+        }
+        .text-primary, .text-info {
+            color: var(--sigale-dark) !important;
+        }
+        footer {
+            background-color: var(--sigale-bg-bone) !important;
+            border-top: 1px solid var(--sigale-gray-light) !important;
+            color: var(--sigale-dark) !important;
         }
     </style>
 </head>
@@ -92,20 +212,19 @@
         <nav class="navbar navbar-expand-lg navbar-dark navbar-sigale px-3 py-2">
             <div class="container-fluid">
                 <!-- Hamburger Button to trigger Offcanvas Menu -->
-                <button class="btn btn-outline-light d-flex align-items-center gap-2 me-3 px-3 py-1" 
+                <button class="btn btn-outline-light d-flex align-items-center justify-content-center me-3 px-2 py-1" 
                         type="button" 
                         data-bs-toggle="offcanvas" 
                         data-bs-target="#sidebarOffcanvas" 
                         aria-controls="sidebarOffcanvas"
-                        title="Seleccionar tabla">
-                    <i class="bi bi-list fs-5"></i>
-                    <span class="d-none d-sm-inline font-monospace fw-semibold">Menú de Tablas</span>
+                        title="Menú">
+                    <i class="bi bi-list fs-4"></i>
                 </button>
 
-                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-white fs-5" asp-controller="Home" asp-action="Index">
-                    <span class="badge bg-primary rounded-pill px-2 py-1"><i class="bi bi-database-check"></i></span>
+                <!-- Program name without database icon -->
+                <a class="navbar-brand fw-bold text-white fs-5 py-0 d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
                     <span>SIGALE</span>
-                    <small class="text-white-50 fw-normal d-none d-md-inline fs-6">| Gestión Extracurricular</small>
+                    <small class="text-white-50 fw-normal fs-6">| Gestión Extracurricular</small>
                 </a>
 
                 <div class="ms-auto d-flex align-items-center gap-2">
@@ -119,11 +238,11 @@
 
     <!-- Offcanvas Hamburger Menu (List of all 11 tables, not grouped by schema) -->
     <div class="offcanvas offcanvas-start offcanvas-sidebar shadow" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-        <div class="offcanvas-header border-bottom bg-light">
+        <div class="offcanvas-header border-bottom">
             <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-table text-primary fs-4"></i>
+                <i class="bi bi-table fs-4 text-dark"></i>
                 <div>
-                    <h5 class="offcanvas-title fw-bold mb-0" id="sidebarOffcanvasLabel">Tablas del Sistema</h5>
+                    <h5 class="offcanvas-title fw-bold mb-0 text-dark" id="sidebarOffcanvasLabel">Tablas del Sistema</h5>
                     <small class="text-muted">Selecciona la tabla a gestionar</small>
                 </div>
             </div>
@@ -133,7 +252,7 @@
             <!-- Search Filter for Tables -->
             <div class="mb-3">
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <span class="input-group-text border-end-0"><i class="bi bi-search"></i></span>
                     <input type="text" id="filterTablesInput" class="form-control border-start-0" placeholder="Buscar tabla..." />
                 </div>
             </div>
@@ -141,82 +260,84 @@
             <!-- Ungrouped List of 11 Tables -->
             <nav class="nav flex-column" id="tablesListNav">
                 <a class="sidebar-item" asp-controller="Roles" asp-action="Index">
-                    <i class="bi bi-shield-lock text-primary"></i>
+                    <i class="bi bi-shield-lock"></i>
                     <span>Roles</span>
                 </a>
                 <a class="sidebar-item" asp-controller="Usuarios" asp-action="Index">
-                    <i class="bi bi-people text-success"></i>
+                    <i class="bi bi-people"></i>
                     <span>Usuarios</span>
                 </a>
                 <a class="sidebar-item" asp-controller="Asociaciones" asp-action="Index">
-                    <i class="bi bi-building text-info"></i>
+                    <i class="bi bi-building"></i>
                     <span>Asociaciones</span>
                 </a>
                 <a class="sidebar-item" asp-controller="MembresiaAsociaciones" asp-action="Index">
-                    <i class="bi bi-person-badge text-warning"></i>
+                    <i class="bi bi-person-badge"></i>
                     <span>Membresías de Asociaciones</span>
                 </a>
                 <a class="sidebar-item" asp-controller="Cursos" asp-action="Index">
-                    <i class="bi bi-journal-bookmark text-danger"></i>
+                    <i class="bi bi-journal-bookmark"></i>
                     <span>Cursos</span>
                 </a>
                 <a class="sidebar-item" asp-controller="InscripcionCursos" asp-action="Index">
-                    <i class="bi bi-clipboard-check text-purple"></i>
+                    <i class="bi bi-clipboard-check"></i>
                     <span>Inscripciones a Cursos</span>
                 </a>
                 <a class="sidebar-item" asp-controller="SeleccionesDeportivas" asp-action="Index">
-                    <i class="bi bi-trophy text-warning"></i>
+                    <i class="bi bi-trophy"></i>
                     <span>Selecciones Deportivas</span>
                 </a>
                 <a class="sidebar-item" asp-controller="ParticipacionDeportiva" asp-action="Index">
-                    <i class="bi bi-activity text-success"></i>
+                    <i class="bi bi-activity"></i>
                     <span>Participaciones Deportivas</span>
                 </a>
                 <a class="sidebar-item" asp-controller="CategoriasDAC" asp-action="Index">
-                    <i class="bi bi-tags text-primary"></i>
+                    <i class="bi bi-tags"></i>
                     <span>Categorías DAC</span>
                 </a>
                 <a class="sidebar-item" asp-controller="ActividadesDAC" asp-action="Index">
-                    <i class="bi bi-calendar-event text-danger"></i>
+                    <i class="bi bi-calendar-event"></i>
                     <span>Actividades DAC</span>
                 </a>
                 <a class="sidebar-item" asp-controller="InscripcionesDAC" asp-action="Index">
-                    <i class="bi bi-journal-check text-info"></i>
+                    <i class="bi bi-journal-check"></i>
                     <span>Inscripciones DAC</span>
                 </a>
             </nav>
         </div>
-        <div class="border-top p-3 bg-light text-center small text-muted">
-            SIGALE &copy; 2026 - Conexión ADO.NET Activa
+        <div class="border-top p-3 text-center small text-muted" style="background-color: var(--sigale-bg-bone);">
+            SIGALE &copy; 2026
         </div>
     </div>
 
-    <!-- Main Content Container -->
-    <div class="container-fluid px-md-4 py-4">
-        <!-- Global Feedback Alerts -->
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
-                <i class="bi bi-check-circle-fill fs-5 me-2"></i>
-                <div class="flex-grow-1">@TempData["SuccessMessage"]</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-        }
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
-                <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
-                <div class="flex-grow-1">@TempData["ErrorMessage"]</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-        }
+    <!-- Main Content Wrapper to guarantee proper footer positioning -->
+    <div class="main-wrapper">
+        <div class="container-fluid px-md-4 py-4">
+            <!-- Global Feedback Alerts (Untouched: visual operation alert colors green and red) -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+                    <div class="flex-grow-1">@TempData["SuccessMessage"]</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                    <div class="flex-grow-1">@TempData["ErrorMessage"]</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
 
-        <main role="main">
-            @RenderBody()
-        </main>
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted mt-5 py-3 bg-white">
+    <footer class="border-top py-3">
         <div class="container-fluid px-md-4 text-center small">
             &copy; 2026 - SIGALE (Sistema de Gestión de Actividades y Liderazgo Estudiantil) - Todos los derechos reservados.
         </div>

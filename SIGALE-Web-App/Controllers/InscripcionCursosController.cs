@@ -30,7 +30,7 @@ namespace SIGALE_Web_App.Controllers
                     FROM courses.InscripcionCursos i
                     INNER JOIN auth.Usuarios u ON i.Carnet = u.Carnet
                     INNER JOIN courses.Cursos c ON i.IdCurso = c.IdCurso
-                    ORDER BY i.IdInscripcion DESC";
+                    ORDER BY i.IdInscripcion ASC";
 
                 using (var command = new SqlCommand(query, connection))
                 using (var reader = await command.ExecuteReaderAsync())
