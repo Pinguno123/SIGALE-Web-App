@@ -1,0 +1,36 @@
+﻿@model IEnumerable<SIGALE_Web_App.Models.Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<h2>Listado de usuarios</h2>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Carnet</th>
+            <th>Nombre completo</th>
+            <th>Carrera</th>
+            <th>Campus</th>
+            <th>Rol</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>@usuario.Carnet</td>
+                <td>@usuario.NombreCompleto</td>
+                <td>@usuario.Carrera</td>
+                <td>@usuario.Campus</td>
+                <td>@usuario.Rol.NombreRol</td>
+                <td>
+                    @(usuario.Activo ? "Activo" : "Inactivo")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
