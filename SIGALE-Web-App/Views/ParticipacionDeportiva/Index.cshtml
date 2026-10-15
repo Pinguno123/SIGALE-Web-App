@@ -1,0 +1,265 @@
+@model IEnumerable<SIGALE_Web_App.Models.ParticipacionDeportiva>
+@{
+    ViewData["Title"] = "Participaciones Deportivas";
+    var usuarios = ViewBag.Usuarios as List<SIGALE_Web_App.Models.Usuario> ?? new List<SIGALE_Web_App.Models.Usuario>();
+    var selecciones = ViewBag.Selecciones as List<SIGALE_Web_App.Models.SeleccionDeportiva> ?? new List<SIGALE_Web_App.Models.SeleccionDeportiva>();
+}
+
+<div class="card card-custom p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Participaciones Deportivas</li>
+                </ol>
+            </nav>
+            <h2 class="h3 fw-bold mb-0 text-dark">
+                <i class="bi bi-activity text-success me-2"></i>Participaciones Deportivas
+            </h2>
+            <small class="text-muted">Total de registros: <span class="badge bg-secondary rounded-pill">@Model.Count()</span></small>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sigale shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                <i class="bi bi-plus-circle me-1"></i> Nueva Participación
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Search box -->
+<div class="card card-custom p-3 mb-4">
+    <div class="input-group">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+        <input type="text" id="filtroTabla" class="form-control border-start-0" placeholder="Filtrar por estudiante, equipo o modalidad..." />
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="card card-custom overflow-hidden mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0" id="tablaDatos">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th>Estudiante</th>
+                    <th>Selección Deportiva</th>
+                    <th>Modalidad</th>
+                    <th>Fecha de Ingreso</th>
+                    <th style="width: 170px;" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No hay participaciones deportivas registradas.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-secondary">#@p.IdParticipacion</td>
+                            <td>
+                                <span class="fw-bold text-dark">@p.Usuario?.NombreCompleto</span>
+                                <small class="text-muted d-block font-monospace">@p.Carnet</small>
+                            </td>
+                            <td class="fw-semibold text-primary">@p.SeleccionDeportiva?.NombreEquipo</td>
+                            <td><span class="badge bg-light text-dark border">@(string.IsNullOrWhiteSpace(p.Modalidad) ? "Titular" : p.Modalidad)</span></td>
+                            <td class="small">@(p.FechaIngreso?.ToString("dd/MM/yyyy") ?? "-")</td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary btn-editar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            data-id="@p.IdParticipacion"
+                                            data-carnet="@p.Carnet"
+                                            data-seleccion="@p.IdSeleccion"
+                                            data-modalidad="@p.Modalidad"
+                                            data-fecha="@(p.FechaIngreso?.ToString("yyyy-MM-dd") ?? "")">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-eliminar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEliminar"
+                                            data-id="@p.IdParticipacion"
+                                            data-nombre="@p.Usuario?.NombreCompleto en @p.SeleccionDeportiva?.NombreEquipo">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Crear -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="ParticipacionDeportiva" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold" id="modalCrearLabel"><i class="bi bi-activity me-2"></i>Nueva Participación Deportiva</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="createCarnet" class="form-label fw-semibold">Estudiante Atleta <span class="text-danger">*</span></label>
+                            <select class="form-select" id="createCarnet" name="carnet" required>
+                                <option value="" disabled selected>Seleccione un estudiante...</option>
+                                @foreach (var u in usuarios)
+                                {
+                                    <option value="@u.Carnet">@u.NombreCompleto (@u.Carnet)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createIdSeleccion" class="form-label fw-semibold">Selección Deportiva <span class="text-danger">*</span></label>
+                            <select class="form-select" id="createIdSeleccion" name="idSeleccion" required>
+                                <option value="" disabled selected>Seleccione un equipo...</option>
+                                @foreach (var s in selecciones)
+                                {
+                                    <option value="@s.IdSeleccion">@s.NombreEquipo</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createModalidad" class="form-label fw-semibold">Modalidad / Posición</label>
+                            <input type="text" class="form-control" id="createModalidad" name="modalidad" maxlength="100" placeholder="Ej. Titular, Reserva, Delantero..." />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createFechaIngreso" class="form-label fw-semibold">Fecha de Ingreso</label>
+                            <input type="date" class="form-control" id="createFechaIngreso" name="fechaIngreso" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-save me-1"></i> Guardar Participación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="ParticipacionDeportiva" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="editIdParticipacion" name="idParticipacion" />
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="modalEditarLabel"><i class="bi bi-pencil-square me-2"></i>Editar Participación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="editCarnet" class="form-label fw-semibold">Estudiante Atleta <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editCarnet" name="carnet" required>
+                                @foreach (var u in usuarios)
+                                {
+                                    <option value="@u.Carnet">@u.NombreCompleto (@u.Carnet)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editIdSeleccion" class="form-label fw-semibold">Selección Deportiva <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editIdSeleccion" name="idSeleccion" required>
+                                @foreach (var s in selecciones)
+                                {
+                                    <option value="@s.IdSeleccion">@s.NombreEquipo</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editModalidad" class="form-label fw-semibold">Modalidad / Posición</label>
+                            <input type="text" class="form-control" id="editModalidad" name="modalidad" maxlength="100" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editFechaIngreso" class="form-label fw-semibold">Fecha de Ingreso</label>
+                            <input type="date" class="form-control" id="editFechaIngreso" name="fechaIngreso" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-check-lg me-1"></i> Actualizar Participación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="ParticipacionDeportiva" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="deleteIdParticipacion" name="idParticipacion" />
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="modalEliminarLabel"><i class="bi bi-trash me-2"></i>Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        ¿Estás seguro de que deseas eliminar la participación de <strong id="deleteNombreParticipacion" class="text-danger"></strong>?
+                    </p>
+                    <small class="text-muted d-block mt-2">Esta acción no se puede deshacer.</small>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Eliminar Definitivamente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal Editar binding
+            var modalEditar = document.getElementById('modalEditar');
+            modalEditar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('editIdParticipacion').value = button.getAttribute('data-id');
+                document.getElementById('editCarnet').value = button.getAttribute('data-carnet');
+                document.getElementById('editIdSeleccion').value = button.getAttribute('data-seleccion');
+                document.getElementById('editModalidad').value = button.getAttribute('data-modalidad') || '';
+                document.getElementById('editFechaIngreso').value = button.getAttribute('data-fecha') || '';
+            });
+
+            // Modal Eliminar binding
+            var modalEliminar = document.getElementById('modalEliminar');
+            modalEliminar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('deleteIdParticipacion').value = button.getAttribute('data-id');
+                document.getElementById('deleteNombreParticipacion').textContent = button.getAttribute('data-nombre');
+            });
+
+            // Table filter
+            var filtro = document.getElementById('filtroTabla');
+            var filas = document.querySelectorAll('#tablaDatos tbody tr');
+            filtro.addEventListener('keyup', function () {
+                var termino = this.value.toLowerCase().trim();
+                filas.forEach(function (fila) {
+                    var texto = fila.textContent.toLowerCase();
+                    fila.style.display = texto.includes(termino) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}

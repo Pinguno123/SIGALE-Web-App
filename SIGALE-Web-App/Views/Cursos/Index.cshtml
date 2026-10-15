@@ -1,0 +1,338 @@
+@model IEnumerable<SIGALE_Web_App.Models.Curso>
+@{
+    ViewData["Title"] = "Gestión de Cursos";
+    var instructores = ViewBag.Instructores as List<SIGALE_Web_App.Models.Usuario> ?? new List<SIGALE_Web_App.Models.Usuario>();
+    var estadosCurso = new[] { "Activo", "Inactivo", "Finalizado" };
+}
+
+<div class="card card-custom p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Cursos</li>
+                </ol>
+            </nav>
+            <h2 class="h3 fw-bold mb-0 text-dark">
+                <i class="bi bi-journal-bookmark text-danger me-2"></i>Gestión de Cursos
+            </h2>
+            <small class="text-muted">Total de registros: <span class="badge bg-secondary rounded-pill">@Model.Count()</span></small>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sigale shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                <i class="bi bi-plus-circle me-1"></i> Nuevo Curso
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Search box -->
+<div class="card card-custom p-3 mb-4">
+    <div class="input-group">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+        <input type="text" id="filtroTabla" class="form-control border-start-0" placeholder="Filtrar por nombre, instructor, horario o estado..." />
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="card card-custom overflow-hidden mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0" id="tablaDatos">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 70px;">ID</th>
+                    <th>Curso</th>
+                    <th>Horario</th>
+                    <th>Fechas</th>
+                    <th style="width: 80px;" class="text-center">Cupo</th>
+                    <th>Instructor</th>
+                    <th style="width: 100px;" class="text-center">Estado</th>
+                    <th style="width: 170px;" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No hay cursos registrados actualmente.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-secondary">#@c.IdCurso</td>
+                            <td>
+                                <span class="fw-bold text-dark">@c.NombreCurso</span>
+                                @if (!string.IsNullOrWhiteSpace(c.Descripcion))
+                                {
+                                    <small class="text-muted d-block text-truncate" style="max-width: 250px;">@c.Descripcion</small>
+                                }
+                            </td>
+                            <td><span class="badge bg-light text-dark border"><i class="bi bi-clock me-1"></i>@c.Horario</span></td>
+                            <td class="small">
+                                <div><i class="bi bi-calendar-event me-1 text-primary"></i>@c.FechaInicio.ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted"><i class="bi bi-calendar-check me-1 text-secondary"></i>@c.FechaFin.ToString("dd/MM/yyyy")</div>
+                            </td>
+                            <td class="text-center fw-bold">@c.CupoMaximo</td>
+                            <td>
+                                @if (c.Instructor != null && !string.IsNullOrWhiteSpace(c.Instructor.NombreCompleto))
+                                {
+                                    <span class="fw-semibold">@c.Instructor.NombreCompleto</span>
+                                    <small class="text-muted d-block font-monospace">@c.CarnetInstructor</small>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Sin asignar</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (c.Estado == "Activo")
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Activo</span>
+                                }
+                                else if (c.Estado == "Finalizado")
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Finalizado</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Inactivo</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary btn-editar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            data-id="@c.IdCurso"
+                                            data-nombre="@c.NombreCurso"
+                                            data-descripcion="@c.Descripcion"
+                                            data-fechainicio="@c.FechaInicio.ToString("yyyy-MM-dd")"
+                                            data-fechafin="@c.FechaFin.ToString("yyyy-MM-dd")"
+                                            data-horario="@c.Horario"
+                                            data-cupo="@c.CupoMaximo"
+                                            data-estado="@c.Estado"
+                                            data-instructor="@c.CarnetInstructor">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-eliminar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEliminar"
+                                            data-id="@c.IdCurso"
+                                            data-nombre="@c.NombreCurso">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Crear -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="Cursos" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="modalCrearLabel"><i class="bi bi-plus-circle me-2"></i>Nuevo Curso</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="createNombreCurso" class="form-label fw-semibold">Nombre del Curso <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createNombreCurso" name="nombreCurso" required maxlength="150" placeholder="Ej. Taller de Robótica" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="createEstado" class="form-label fw-semibold">Estado</label>
+                            <select class="form-select" id="createEstado" name="estado">
+                                @foreach (var est in estadosCurso)
+                                {
+                                    <option value="@est">@est</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="createDescripcion" class="form-label fw-semibold">Descripción</label>
+                            <textarea class="form-control" id="createDescripcion" name="descripcion" rows="2" maxlength="500" placeholder="Breve descripción del temario..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createFechaInicio" class="form-label fw-semibold">Fecha de Inicio <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="createFechaInicio" name="fechaInicio" required value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createFechaFin" class="form-label fw-semibold">Fecha de Fin <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="createFechaFin" name="fechaFin" required value="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="createHorario" class="form-label fw-semibold">Horario <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createHorario" name="horario" required maxlength="100" placeholder="Ej. Sábados 8:00 - 12:00" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="createCupo" class="form-label fw-semibold">Cupo Máximo <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="createCupo" name="cupoMaximo" required min="1" max="500" value="25" />
+                        </div>
+                        <div class="col-md-5">
+                            <label for="createInstructor" class="form-label fw-semibold">Instructor</label>
+                            <select class="form-select" id="createInstructor" name="carnetInstructor">
+                                <option value="">(Sin instructor)</option>
+                                @foreach (var ins in instructores)
+                                {
+                                    <option value="@ins.Carnet">@ins.NombreCompleto (@ins.Carnet)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-save me-1"></i> Guardar Curso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="Cursos" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="editIdCurso" name="idCurso" />
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="modalEditarLabel"><i class="bi bi-pencil-square me-2"></i>Editar Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="editNombreCurso" class="form-label fw-semibold">Nombre del Curso <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editNombreCurso" name="nombreCurso" required maxlength="150" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editEstado" class="form-label fw-semibold">Estado</label>
+                            <select class="form-select" id="editEstado" name="estado">
+                                @foreach (var est in estadosCurso)
+                                {
+                                    <option value="@est">@est</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="editDescripcion" class="form-label fw-semibold">Descripción</label>
+                            <textarea class="form-control" id="editDescripcion" name="descripcion" rows="2" maxlength="500"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editFechaInicio" class="form-label fw-semibold">Fecha de Inicio <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="editFechaInicio" name="fechaInicio" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editFechaFin" class="form-label fw-semibold">Fecha de Fin <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="editFechaFin" name="fechaFin" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editHorario" class="form-label fw-semibold">Horario <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editHorario" name="horario" required maxlength="100" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="editCupo" class="form-label fw-semibold">Cupo Máximo <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editCupo" name="cupoMaximo" required min="1" max="500" />
+                        </div>
+                        <div class="col-md-5">
+                            <label for="editInstructor" class="form-label fw-semibold">Instructor</label>
+                            <select class="form-select" id="editInstructor" name="carnetInstructor">
+                                <option value="">(Sin instructor)</option>
+                                @foreach (var ins in instructores)
+                                {
+                                    <option value="@ins.Carnet">@ins.NombreCompleto (@ins.Carnet)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-check-lg me-1"></i> Actualizar Curso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Cursos" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="deleteIdCurso" name="idCurso" />
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="modalEliminarLabel"><i class="bi bi-trash me-2"></i>Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        ¿Estás seguro de que deseas eliminar el curso <strong id="deleteNombreCurso" class="text-danger"></strong>?
+                    </p>
+                    <small class="text-muted d-block mt-2">Esta acción no se puede deshacer.</small>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Eliminar Definitivamente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal Editar binding
+            var modalEditar = document.getElementById('modalEditar');
+            modalEditar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('editIdCurso').value = button.getAttribute('data-id');
+                document.getElementById('editNombreCurso').value = button.getAttribute('data-nombre');
+                document.getElementById('editDescripcion').value = button.getAttribute('data-descripcion') || '';
+                document.getElementById('editFechaInicio').value = button.getAttribute('data-fechainicio');
+                document.getElementById('editFechaFin').value = button.getAttribute('data-fechafin');
+                document.getElementById('editHorario').value = button.getAttribute('data-horario');
+                document.getElementById('editCupo').value = button.getAttribute('data-cupo');
+                document.getElementById('editEstado').value = button.getAttribute('data-estado') || 'Activo';
+                document.getElementById('editInstructor').value = button.getAttribute('data-instructor') || '';
+            });
+
+            // Modal Eliminar binding
+            var modalEliminar = document.getElementById('modalEliminar');
+            modalEliminar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('deleteIdCurso').value = button.getAttribute('data-id');
+                document.getElementById('deleteNombreCurso').textContent = button.getAttribute('data-nombre');
+            });
+
+            // Table filter
+            var filtro = document.getElementById('filtroTabla');
+            var filas = document.querySelectorAll('#tablaDatos tbody tr');
+            filtro.addEventListener('keyup', function () {
+                var termino = this.value.toLowerCase().trim();
+                filas.forEach(function (fila) {
+                    var texto = fila.textContent.toLowerCase();
+                    fila.style.display = texto.includes(termino) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}

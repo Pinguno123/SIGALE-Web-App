@@ -1,0 +1,253 @@
+@model IEnumerable<SIGALE_Web_App.Models.SeleccionDeportiva>
+@{
+    ViewData["Title"] = "Selecciones Deportivas";
+}
+
+<div class="card card-custom p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Selecciones Deportivas</li>
+                </ol>
+            </nav>
+            <h2 class="h3 fw-bold mb-0 text-dark">
+                <i class="bi bi-trophy text-warning me-2"></i>Selecciones Deportivas
+            </h2>
+            <small class="text-muted">Total de registros: <span class="badge bg-secondary rounded-pill">@Model.Count()</span></small>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sigale shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                <i class="bi bi-plus-circle me-1"></i> Nueva Selección
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Search box -->
+<div class="card card-custom p-3 mb-4">
+    <div class="input-group">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+        <input type="text" id="filtroTabla" class="form-control border-start-0" placeholder="Filtrar por nombre de equipo, disciplina o rama..." />
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="card card-custom overflow-hidden mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0" id="tablaDatos">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th>Nombre del Equipo</th>
+                    <th>Disciplina</th>
+                    <th>Rama</th>
+                    <th style="width: 100px;">Imagen</th>
+                    <th style="width: 170px;" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No hay selecciones deportivas registradas.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var s in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-secondary">#@s.IdSeleccion</td>
+                            <td class="fw-bold text-dark">@s.NombreEquipo</td>
+                            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">@s.Disciplina</span></td>
+                            <td><span class="badge bg-light text-dark border">@s.Rama</span></td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(s.ImgUrl))
+                                {
+                                    <a href="@s.ImgUrl" target="_blank" class="btn btn-outline-info btn-sm p-1" title="Ver imagen">
+                                        <i class="bi bi-image"></i> Ver
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">-</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary btn-editar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            data-id="@s.IdSeleccion"
+                                            data-disciplina="@s.Disciplina"
+                                            data-rama="@s.Rama"
+                                            data-nombre="@s.NombreEquipo"
+                                            data-imgurl="@s.ImgUrl">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-eliminar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEliminar"
+                                            data-id="@s.IdSeleccion"
+                                            data-nombre="@s.NombreEquipo">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Crear -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="SeleccionesDeportivas" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="modalCrearLabel"><i class="bi bi-trophy me-2"></i>Nueva Selección Deportiva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="createNombreEquipo" class="form-label fw-semibold">Nombre del Equipo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="createNombreEquipo" name="nombreEquipo" required maxlength="100" placeholder="Ej. Águilas Basketball" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createDisciplina" class="form-label fw-semibold">Disciplina <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="createDisciplina" name="disciplina" required maxlength="50" placeholder="Ej. Fútbol, Baloncesto, Voleibol..." />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createRama" class="form-label fw-semibold">Rama <span class="text-danger">*</span></label>
+                        <select class="form-select" id="createRama" name="rama" required>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Mixto">Mixto</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="createImgUrl" class="form-label fw-semibold">URL de Imagen / Logo</label>
+                        <input type="url" class="form-control" id="createImgUrl" name="imgUrl" placeholder="https://..." />
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-save me-1"></i> Guardar Selección</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="SeleccionesDeportivas" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="editIdSeleccion" name="idSeleccion" />
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="modalEditarLabel"><i class="bi bi-pencil-square me-2"></i>Editar Selección</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editNombreEquipo" class="form-label fw-semibold">Nombre del Equipo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editNombreEquipo" name="nombreEquipo" required maxlength="100" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDisciplina" class="form-label fw-semibold">Disciplina <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editDisciplina" name="disciplina" required maxlength="50" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRama" class="form-label fw-semibold">Rama <span class="text-danger">*</span></label>
+                        <select class="form-select" id="editRama" name="rama" required>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Mixto">Mixto</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editImgUrl" class="form-label fw-semibold">URL de Imagen / Logo</label>
+                        <input type="url" class="form-control" id="editImgUrl" name="imgUrl" />
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-check-lg me-1"></i> Actualizar Selección</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="SeleccionesDeportivas" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="deleteIdSeleccion" name="idSeleccion" />
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="modalEliminarLabel"><i class="bi bi-trash me-2"></i>Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        ¿Estás seguro de que deseas eliminar la selección deportiva <strong id="deleteNombreSeleccion" class="text-danger"></strong>?
+                    </p>
+                    <small class="text-muted d-block mt-2">Esta acción no se puede deshacer.</small>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Eliminar Definitivamente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal Editar binding
+            var modalEditar = document.getElementById('modalEditar');
+            modalEditar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('editIdSeleccion').value = button.getAttribute('data-id');
+                document.getElementById('editDisciplina').value = button.getAttribute('data-disciplina');
+                document.getElementById('editRama').value = button.getAttribute('data-rama');
+                document.getElementById('editNombreEquipo').value = button.getAttribute('data-nombre');
+                document.getElementById('editImgUrl').value = button.getAttribute('data-imgurl') || '';
+            });
+
+            // Modal Eliminar binding
+            var modalEliminar = document.getElementById('modalEliminar');
+            modalEliminar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('deleteIdSeleccion').value = button.getAttribute('data-id');
+                document.getElementById('deleteNombreSeleccion').textContent = button.getAttribute('data-nombre');
+            });
+
+            // Table filter
+            var filtro = document.getElementById('filtroTabla');
+            var filas = document.querySelectorAll('#tablaDatos tbody tr');
+            filtro.addEventListener('keyup', function () {
+                var termino = this.value.toLowerCase().trim();
+                filas.forEach(function (fila) {
+                    var texto = fila.textContent.toLowerCase();
+                    fila.style.display = texto.includes(termino) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}

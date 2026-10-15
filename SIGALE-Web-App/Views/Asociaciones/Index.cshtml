@@ -1,0 +1,271 @@
+@model IEnumerable<SIGALE_Web_App.Models.Asociacion>
+@{
+    ViewData["Title"] = "Gestión de Asociaciones";
+}
+
+<div class="card card-custom p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Asociaciones</li>
+                </ol>
+            </nav>
+            <h2 class="h3 fw-bold mb-0 text-dark">
+                <i class="bi bi-building text-info me-2"></i>Gestión de Asociaciones
+            </h2>
+            <small class="text-muted">Total de registros: <span class="badge bg-secondary rounded-pill">@Model.Count()</span></small>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sigale shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                <i class="bi bi-plus-circle me-1"></i> Nueva Asociación
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Search box -->
+<div class="card card-custom p-3 mb-4">
+    <div class="input-group">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+        <input type="text" id="filtroTabla" class="form-control border-start-0" placeholder="Filtrar por acrónimo, nombre, descripción o año..." />
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="card card-custom overflow-hidden mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0" id="tablaDatos">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th style="width: 120px;">Acrónimo</th>
+                    <th>Nombre de la Asociación</th>
+                    <th style="width: 100px;">Año Fund.</th>
+                    <th>Descripción</th>
+                    <th style="width: 130px;">Enlaces</th>
+                    <th style="width: 170px;" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No hay asociaciones registradas.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var asoc in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-secondary">#@asoc.IdAsociacion</td>
+                            <td><span class="badge bg-info-subtle text-info border border-info-subtle fw-bold">@asoc.Acronimo</span></td>
+                            <td class="fw-semibold text-dark">@asoc.Nombre</td>
+                            <td>@(asoc.AnioFundacion?.ToString() ?? "-")</td>
+                            <td class="text-muted small">
+                                @(string.IsNullOrWhiteSpace(asoc.Descripcion) ? "-" : (asoc.Descripcion.Length > 80 ? asoc.Descripcion.Substring(0, 80) + "..." : asoc.Descripcion))
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(asoc.Formulario))
+                                {
+                                    <a href="@asoc.Formulario" target="_blank" class="btn btn-outline-secondary btn-sm p-1" title="Ver Formulario"><i class="bi bi-file-earmark-text"></i></a>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(asoc.ImgUrl))
+                                {
+                                    <a href="@asoc.ImgUrl" target="_blank" class="btn btn-outline-info btn-sm p-1" title="Ver Imagen"><i class="bi bi-image"></i></a>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary btn-editar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            data-id="@asoc.IdAsociacion"
+                                            data-acronimo="@asoc.Acronimo"
+                                            data-nombre="@asoc.Nombre"
+                                            data-anio="@asoc.AnioFundacion"
+                                            data-descripcion="@asoc.Descripcion"
+                                            data-formulario="@asoc.Formulario"
+                                            data-imgurl="@asoc.ImgUrl">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-eliminar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEliminar"
+                                            data-id="@asoc.IdAsociacion"
+                                            data-nombre="@asoc.Nombre">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Crear -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="Asociaciones" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-info text-dark">
+                    <h5 class="modal-title fw-bold" id="modalCrearLabel"><i class="bi bi-building-add me-2"></i>Nueva Asociación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="createAcronimo" class="form-label fw-semibold">Acrónimo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createAcronimo" name="acronimo" required maxlength="20" placeholder="Ej. ACM, IEEE..." />
+                        </div>
+                        <div class="col-md-8">
+                            <label for="createNombre" class="form-label fw-semibold">Nombre Completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createNombre" name="nombre" required maxlength="200" placeholder="Ej. Asociación de Computación y Maquinaria" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="createAnio" class="form-label fw-semibold">Año de Fundación</label>
+                            <input type="number" class="form-control" id="createAnio" name="anioFundacion" min="1900" max="2100" placeholder="Ej. 2018" />
+                        </div>
+                        <div class="col-md-8">
+                            <label for="createFormulario" class="form-label fw-semibold">URL Formulario</label>
+                            <input type="url" class="form-control" id="createFormulario" name="formulario" placeholder="https://..." />
+                        </div>
+                        <div class="col-12">
+                            <label for="createImgUrl" class="form-label fw-semibold">URL Imagen / Logo</label>
+                            <input type="url" class="form-control" id="createImgUrl" name="imgUrl" placeholder="https://..." />
+                        </div>
+                        <div class="col-12">
+                            <label for="createDescripcion" class="form-label fw-semibold">Descripción</label>
+                            <textarea class="form-control" id="createDescripcion" name="descripcion" rows="3" placeholder="Objetivos y descripción de la asociación..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info text-white"><i class="bi bi-save me-1"></i> Guardar Asociación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="Asociaciones" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="editIdAsociacion" name="idAsociacion" />
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="modalEditarLabel"><i class="bi bi-pencil-square me-2"></i>Editar Asociación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="editAcronimo" class="form-label fw-semibold">Acrónimo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editAcronimo" name="acronimo" required maxlength="20" />
+                        </div>
+                        <div class="col-md-8">
+                            <label for="editNombre" class="form-label fw-semibold">Nombre Completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editNombre" name="nombre" required maxlength="200" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editAnio" class="form-label fw-semibold">Año de Fundación</label>
+                            <input type="number" class="form-control" id="editAnio" name="anioFundacion" min="1900" max="2100" />
+                        </div>
+                        <div class="col-md-8">
+                            <label for="editFormulario" class="form-label fw-semibold">URL Formulario</label>
+                            <input type="url" class="form-control" id="editFormulario" name="formulario" />
+                        </div>
+                        <div class="col-12">
+                            <label for="editImgUrl" class="form-label fw-semibold">URL Imagen / Logo</label>
+                            <input type="url" class="form-control" id="editImgUrl" name="imgUrl" />
+                        </div>
+                        <div class="col-12">
+                            <label for="editDescripcion" class="form-label fw-semibold">Descripción</label>
+                            <textarea class="form-control" id="editDescripcion" name="descripcion" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-check-lg me-1"></i> Actualizar Asociación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Asociaciones" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="deleteIdAsociacion" name="idAsociacion" />
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="modalEliminarLabel"><i class="bi bi-trash me-2"></i>Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        ¿Estás seguro de que deseas eliminar la asociación <strong id="deleteNombreAsociacion" class="text-danger"></strong>?
+                    </p>
+                    <small class="text-muted d-block mt-2">Esta acción no se puede deshacer.</small>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Eliminar Definitivamente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal Editar binding
+            var modalEditar = document.getElementById('modalEditar');
+            modalEditar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('editIdAsociacion').value = button.getAttribute('data-id');
+                document.getElementById('editAcronimo').value = button.getAttribute('data-acronimo');
+                document.getElementById('editNombre').value = button.getAttribute('data-nombre');
+                document.getElementById('editAnio').value = button.getAttribute('data-anio') || '';
+                document.getElementById('editDescripcion').value = button.getAttribute('data-descripcion') || '';
+                document.getElementById('editFormulario').value = button.getAttribute('data-formulario') || '';
+                document.getElementById('editImgUrl').value = button.getAttribute('data-imgurl') || '';
+            });
+
+            // Modal Eliminar binding
+            var modalEliminar = document.getElementById('modalEliminar');
+            modalEliminar.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('deleteIdAsociacion').value = button.getAttribute('data-id');
+                document.getElementById('deleteNombreAsociacion').textContent = button.getAttribute('data-nombre');
+            });
+
+            // Table filter
+            var filtro = document.getElementById('filtroTabla');
+            var filas = document.querySelectorAll('#tablaDatos tbody tr');
+            filtro.addEventListener('keyup', function () {
+                var termino = this.value.toLowerCase().trim();
+                filas.forEach(function (fila) {
+                    var texto = fila.textContent.toLowerCase();
+                    fila.style.display = texto.includes(termino) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}
