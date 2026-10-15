@@ -149,7 +149,7 @@
                                 <option value="" disabled selected>Seleccione un curso...</option>
                                 @foreach (var c in cursos)
                                 {
-                                    <option value="@c.IdCurso">@c.NombreCurso</option>
+                                    <option value="@c.IdCurso" data-fechainicio="@c.FechaInicio.ToString("yyyy-MM-dd")">@c.NombreCurso (Inicia: @c.FechaInicio.ToString("dd/MM/yyyy"))</option>
                                 }
                             </select>
                         </div>
@@ -158,8 +158,9 @@
                             <input type="number" step="0.01" class="form-control" id="createNota" name="nota" min="0" max="100" placeholder="Ej. 85.50" />
                         </div>
                         <div class="col-md-4">
-                            <label for="createFechaInscripcion" class="form-label fw-semibold">Fecha Inscripción</label>
-                            <input type="datetime-local" class="form-control" id="createFechaInscripcion" name="fechaInscripcion" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                            <label for="createFechaInscripcion" class="form-label fw-semibold">Fecha Inscripción <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" id="createFechaInscripcion" name="fechaInscripcion" required value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                            <small class="text-muted" style="font-size: 0.75rem;">Debe ser previa al inicio del curso.</small>
                         </div>
                         <div class="col-md-4">
                             <label for="createEstadoInscripcion" class="form-label fw-semibold">Estado</label>
@@ -208,7 +209,7 @@
                             <select class="form-select" id="editIdCurso" name="idCurso" required>
                                 @foreach (var c in cursos)
                                 {
-                                    <option value="@c.IdCurso">@c.NombreCurso</option>
+                                    <option value="@c.IdCurso" data-fechainicio="@c.FechaInicio.ToString("yyyy-MM-dd")">@c.NombreCurso (Inicia: @c.FechaInicio.ToString("dd/MM/yyyy"))</option>
                                 }
                             </select>
                         </div>
@@ -219,6 +220,7 @@
                         <div class="col-md-4">
                             <label for="editFechaInscripcion" class="form-label fw-semibold">Fecha Inscripción</label>
                             <input type="datetime-local" class="form-control" id="editFechaInscripcion" name="fechaInscripcion" />
+                            <small class="text-muted" style="font-size: 0.75rem;">Debe ser previa al inicio del curso.</small>
                         </div>
                         <div class="col-md-4">
                             <label for="editEstadoInscripcion" class="form-label fw-semibold">Estado</label>
@@ -281,6 +283,32 @@
                 document.getElementById('editEstadoInscripcion').value = button.getAttribute('data-estado') || 'Confirmada';
             });
 
+            // Restricción dinámica de FechaInscripcion < FechaInicio
+            function ajustarMaxFechaInscripcion(cursoSelect, fechaInput) {
+                var selectedOpt = cursoSelect.options[cursoSelect.selectedIndex];
+                if (selectedOpt && selectedOpt.getAttribute('data-fechainicio')) {
+                    var fInicio = selectedOpt.getAttribute('data-fechainicio');
+                    var maxDatetime = fInicio + 'T23:59';
+                    fechaInput.max = maxDatetime;
+                    if (fechaInput.value && fechaInput.value > maxDatetime) {
+                        fechaInput.value = fInicio + 'T00:00';
+                    }
+                }
+            }
+
+            var cCurso = document.getElementById('createIdCurso');
+            var cFecha = document.getElementById('createFechaInscripcion');
+            if (cCurso && cFecha) {
+                cCurso.addEventListener('change', function() { ajustarMaxFechaInscripcion(cCurso, cFecha); });
+            }
+
+            var eCurso = document.getElementById('editIdCurso');
+            var eFecha = document.getElementById('editFechaInscripcion');
+            if (eCurso && eFecha) {
+                eCurso.addEventListener('change', function() { ajustarMaxFechaInscripcion(eCurso, eFecha); });
+                modalEditar.addEventListener('shown.bs.modal', function() { ajustarMaxFechaInscripcion(eCurso, eFecha); });
+            }
+
             // Modal Eliminar binding
             var modalEliminar = document.getElementById('modalEliminar');
             modalEliminar.addEventListener('show.bs.modal', function (event) {
@@ -288,7 +316,6 @@
                 document.getElementById('deleteIdInscripcion').value = button.getAttribute('data-id');
                 document.getElementById('deleteNombreInscripcion').textContent = button.getAttribute('data-nombre');
             });
-
 
         });
     </script>

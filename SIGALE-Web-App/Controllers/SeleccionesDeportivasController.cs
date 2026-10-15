@@ -63,6 +63,18 @@ namespace SIGALE_Web_App.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (nombreEquipo.Trim().Length < 3)
+            {
+                TempData["ErrorMessage"] = "El nombre de la selección debe tener al menos 3 caracteres.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (disciplina.Trim().Length < 3)
+            {
+                TempData["ErrorMessage"] = "La disciplina deportiva debe tener al menos 3 caracteres.";
+                return RedirectToAction(nameof(Index));
+            }
+
             try
             {
                 using var connection = new SqlConnection(_connectionString);
@@ -97,6 +109,18 @@ namespace SIGALE_Web_App.Controllers
             if (idSeleccion <= 0 || string.IsNullOrWhiteSpace(disciplina) || string.IsNullOrWhiteSpace(rama) || string.IsNullOrWhiteSpace(nombreEquipo))
             {
                 TempData["ErrorMessage"] = "Datos incompletos para actualizar la selección.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (nombreEquipo.Trim().Length < 3)
+            {
+                TempData["ErrorMessage"] = "El nombre de la selección debe tener al menos 3 caracteres.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (disciplina.Trim().Length < 3)
+            {
+                TempData["ErrorMessage"] = "La disciplina deportiva debe tener al menos 3 caracteres.";
                 return RedirectToAction(nameof(Index));
             }
 

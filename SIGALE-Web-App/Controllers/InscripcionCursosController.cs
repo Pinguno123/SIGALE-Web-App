@@ -88,6 +88,24 @@ namespace SIGALE_Web_App.Controllers
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
+                var fInscripcion = (fechaInscripcion ?? DateTime.Today).Date;
+                const string queryCurso = "SELECT FechaInicio, NombreCurso FROM courses.Cursos WHERE IdCurso = @IdCurso";
+                using (var cmdCurso = new SqlCommand(queryCurso, connection))
+                {
+                    cmdCurso.Parameters.AddWithValue("@IdCurso", idCurso);
+                    using var readerCurso = await cmdCurso.ExecuteReaderAsync();
+                    if (await readerCurso.ReadAsync())
+                    {
+                        var fechaInicioCurso = readerCurso.GetDateTime(0).Date;
+                        var nombreCurso = readerCurso.GetString(1);
+                        if (fInscripcion >= fechaInicioCurso)
+                        {
+                            TempData["ErrorMessage"] = $"Solo es posible inscribirse antes de que empiece el curso. El curso '{nombreCurso}' inicia el {fechaInicioCurso:dd/MM/yyyy}.";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                }
+
                 const string query = @"
                     INSERT INTO courses.InscripcionCursos (Carnet, IdCurso, Nota, FechaInscripcion, EstadoInscripcion)
                     VALUES (@Carnet, @IdCurso, @Nota, @FechaInscripcion, @EstadoInscripcion)";
@@ -96,7 +114,7 @@ namespace SIGALE_Web_App.Controllers
                 command.Parameters.AddWithValue("@Carnet", carnet.Trim().ToUpper());
                 command.Parameters.AddWithValue("@IdCurso", idCurso);
                 command.Parameters.AddWithValue("@Nota", (object?)nota ?? DBNull.Value);
-                command.Parameters.AddWithValue("@FechaInscripcion", (object?)fechaInscripcion ?? DateTime.Now);
+                command.Parameters.AddWithValue("@FechaInscripcion", fInscripcion);
                 command.Parameters.AddWithValue("@EstadoInscripcion", string.IsNullOrWhiteSpace(estadoInscripcion) ? "Confirmada" : estadoInscripcion.Trim());
 
                 await command.ExecuteNonQueryAsync();
@@ -126,6 +144,26 @@ namespace SIGALE_Web_App.Controllers
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
+                if (fechaInscripcion.HasValue)
+                {
+                    const string queryCurso = "SELECT FechaInicio, NombreCurso FROM courses.Cursos WHERE IdCurso = @IdCurso";
+                    using (var cmdCurso = new SqlCommand(queryCurso, connection))
+                    {
+                        cmdCurso.Parameters.AddWithValue("@IdCurso", idCurso);
+                        using var readerCurso = await cmdCurso.ExecuteReaderAsync();
+                        if (await readerCurso.ReadAsync())
+                        {
+                            var fechaInicioCurso = readerCurso.GetDateTime(0).Date;
+                            var nombreCurso = readerCurso.GetString(1);
+                            if (fechaInscripcion.Value.Date >= fechaInicioCurso)
+                            {
+                                TempData["ErrorMessage"] = $"Solo es posible inscribirse antes de que empiece el curso. El curso '{nombreCurso}' inicia el {fechaInicioCurso:dd/MM/yyyy}.";
+                                return RedirectToAction(nameof(Index));
+                            }
+                        }
+                    }
+                }
+
                 const string query = @"
                     UPDATE courses.InscripcionCursos
                     SET Carnet = @Carnet,
@@ -140,7 +178,7 @@ namespace SIGALE_Web_App.Controllers
                 command.Parameters.AddWithValue("@Carnet", carnet.Trim().ToUpper());
                 command.Parameters.AddWithValue("@IdCurso", idCurso);
                 command.Parameters.AddWithValue("@Nota", (object?)nota ?? DBNull.Value);
-                command.Parameters.AddWithValue("@FechaInscripcion", (object?)fechaInscripcion ?? DBNull.Value);
+                command.Parameters.AddWithValue("@FechaInscripcion", (object?)fechaInscripcion?.Date ?? DBNull.Value);
                 command.Parameters.AddWithValue("@EstadoInscripcion", string.IsNullOrWhiteSpace(estadoInscripcion) ? "Confirmada" : estadoInscripcion.Trim());
 
                 var rows = await command.ExecuteNonQueryAsync();
@@ -209,12 +247,17 @@ namespace SIGALE_Web_App.Controllers
         private static async Task<List<Curso>> ObtenerCursosAsync(SqlConnection connection)
         {
             var list = new List<Curso>();
-            const string query = "SELECT IdCurso, NombreCurso FROM courses.Cursos ORDER BY NombreCurso ASC";
+            const string query = "SELECT IdCurso, NombreCurso, FechaInicio FROM courses.Cursos ORDER BY NombreCurso ASC";
             using var command = new SqlCommand(query, connection);
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                list.Add(new Curso { IdCurso = reader.GetInt32(0), NombreCurso = reader.GetString(1) });
+                list.Add(new Curso 
+                { 
+                    IdCurso = reader.GetInt32(0), 
+                    NombreCurso = reader.GetString(1),
+                    FechaInicio = DateOnly.FromDateTime(reader.GetDateTime(2))
+                });
             }
             return list;
         }

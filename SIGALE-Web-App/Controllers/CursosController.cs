@@ -71,15 +71,27 @@ namespace SIGALE_Web_App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string nombreCurso, string? descripcion, DateTime fechaInicio, DateTime fechaFin, string horario, int cupoMaximo, string estado, string? carnetInstructor)
         {
-            if (string.IsNullOrWhiteSpace(nombreCurso) || string.IsNullOrWhiteSpace(horario))
+            if (string.IsNullOrWhiteSpace(nombreCurso) || nombreCurso.Trim().Length < 5)
             {
-                TempData["ErrorMessage"] = "Nombre del curso y Horario son obligatorios.";
+                TempData["ErrorMessage"] = "El nombre del curso es obligatorio y debe tener al menos 5 caracteres.";
                 return RedirectToAction(nameof(Index));
             }
 
-            if (fechaFin < fechaInicio)
+            if (string.IsNullOrWhiteSpace(horario))
             {
-                TempData["ErrorMessage"] = "La fecha de fin debe ser posterior o igual a la fecha de inicio.";
+                TempData["ErrorMessage"] = "El horario del curso es obligatorio.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (cupoMaximo <= 15)
+            {
+                TempData["ErrorMessage"] = "El cupo máximo debe ser mayor a 15 (mínimo 16).";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (fechaFin.Date < fechaInicio.Date.AddDays(7))
+            {
+                TempData["ErrorMessage"] = "La fecha de fin del curso debe ser por lo menos una semana después de que inicie.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -87,6 +99,19 @@ namespace SIGALE_Web_App.Controllers
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
+
+                if (!string.IsNullOrWhiteSpace(carnetInstructor))
+                {
+                    const string checkInstructor = "SELECT COUNT(1) FROM auth.Usuarios WHERE Carnet = @Carnet AND IdRol = 2";
+                    using var checkCmd = new SqlCommand(checkInstructor, connection);
+                    checkCmd.Parameters.AddWithValue("@Carnet", carnetInstructor.Trim().ToUpper());
+                    var valido = (int)(await checkCmd.ExecuteScalarAsync() ?? 0) > 0;
+                    if (!valido)
+                    {
+                        TempData["ErrorMessage"] = "El usuario seleccionado no cuenta con el rol de Instructor (IdRol = 2).";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
 
                 const string query = @"
                     INSERT INTO courses.Cursos (NombreCurso, Descripcion, FechaInicio, FechaFin, Horario, CupoMaximo, Estado, CarnetInstructor)
@@ -118,15 +143,27 @@ namespace SIGALE_Web_App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int idCurso, string nombreCurso, string? descripcion, DateTime fechaInicio, DateTime fechaFin, string horario, int cupoMaximo, string estado, string? carnetInstructor)
         {
-            if (idCurso <= 0 || string.IsNullOrWhiteSpace(nombreCurso) || string.IsNullOrWhiteSpace(horario))
+            if (idCurso <= 0 || string.IsNullOrWhiteSpace(nombreCurso) || nombreCurso.Trim().Length < 5)
             {
-                TempData["ErrorMessage"] = "Datos incompletos para actualizar el curso.";
+                TempData["ErrorMessage"] = "El nombre del curso es obligatorio y debe tener al menos 5 caracteres.";
                 return RedirectToAction(nameof(Index));
             }
 
-            if (fechaFin < fechaInicio)
+            if (string.IsNullOrWhiteSpace(horario))
             {
-                TempData["ErrorMessage"] = "La fecha de fin debe ser posterior o igual a la fecha de inicio.";
+                TempData["ErrorMessage"] = "El horario del curso es obligatorio.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (cupoMaximo <= 15)
+            {
+                TempData["ErrorMessage"] = "El cupo máximo debe ser mayor a 15 (mínimo 16).";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (fechaFin.Date < fechaInicio.Date.AddDays(7))
+            {
+                TempData["ErrorMessage"] = "La fecha de fin del curso debe ser por lo menos una semana después de que inicie.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -134,6 +171,19 @@ namespace SIGALE_Web_App.Controllers
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
+
+                if (!string.IsNullOrWhiteSpace(carnetInstructor))
+                {
+                    const string checkInstructor = "SELECT COUNT(1) FROM auth.Usuarios WHERE Carnet = @Carnet AND IdRol = 2";
+                    using var checkCmd = new SqlCommand(checkInstructor, connection);
+                    checkCmd.Parameters.AddWithValue("@Carnet", carnetInstructor.Trim().ToUpper());
+                    var valido = (int)(await checkCmd.ExecuteScalarAsync() ?? 0) > 0;
+                    if (!valido)
+                    {
+                        TempData["ErrorMessage"] = "El usuario seleccionado no cuenta con el rol de Instructor (IdRol = 2).";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
 
                 const string query = @"
                     UPDATE courses.Cursos
@@ -211,7 +261,7 @@ namespace SIGALE_Web_App.Controllers
         private static async Task<List<Usuario>> ObtenerInstructoresAsync(SqlConnection connection)
         {
             var list = new List<Usuario>();
-            const string query = "SELECT Carnet, NombreCompleto FROM auth.Usuarios ORDER BY NombreCompleto ASC";
+            const string query = "SELECT Carnet, NombreCompleto FROM auth.Usuarios WHERE IdRol = 2 ORDER BY NombreCompleto ASC";
             using var command = new SqlCommand(query, connection);
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())

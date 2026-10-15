@@ -146,7 +146,7 @@
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label for="createNombreCurso" class="form-label fw-semibold">Nombre del Curso <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="createNombreCurso" name="nombreCurso" required maxlength="150" placeholder="Ej. Taller de Robótica" />
+                            <input type="text" class="form-control" id="createNombreCurso" name="nombreCurso" required minlength="5" maxlength="150" placeholder="Ej. Taller de Robótica" />
                         </div>
                         <div class="col-md-4">
                             <label for="createEstado" class="form-label fw-semibold">Estado</label>
@@ -166,16 +166,16 @@
                             <input type="date" class="form-control" id="createFechaInicio" name="fechaInicio" required value="@DateTime.Today.ToString("yyyy-MM-dd")" />
                         </div>
                         <div class="col-md-6">
-                            <label for="createFechaFin" class="form-label fw-semibold">Fecha de Fin <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="createFechaFin" name="fechaFin" required value="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")" />
+                            <label for="createFechaFin" class="form-label fw-semibold">Fecha de Fin<span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="createFechaFin" name="fechaFin" required value="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")" min="@DateTime.Today.AddDays(7).ToString("yyyy-MM-dd")" />
                         </div>
                         <div class="col-md-4">
                             <label for="createHorario" class="form-label fw-semibold">Horario <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="createHorario" name="horario" required maxlength="100" placeholder="Ej. Sábados 8:00 - 12:00" />
                         </div>
                         <div class="col-md-3">
-                            <label for="createCupo" class="form-label fw-semibold">Cupo Máximo <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" id="createCupo" name="cupoMaximo" required min="1" max="500" value="25" />
+                            <label for="createCupo" class="form-label fw-semibold">Cupo Máximo<span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="createCupo" name="cupoMaximo" required min="16" max="500" value="25" placeholder="Mínimo 16" />
                         </div>
                         <div class="col-md-5">
                             <label for="createInstructor" class="form-label fw-semibold">Instructor</label>
@@ -213,7 +213,7 @@
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label for="editNombreCurso" class="form-label fw-semibold">Nombre del Curso <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editNombreCurso" name="nombreCurso" required maxlength="150" />
+                            <input type="text" class="form-control" id="editNombreCurso" name="nombreCurso" required minlength="5" maxlength="150" />
                         </div>
                         <div class="col-md-4">
                             <label for="editEstado" class="form-label fw-semibold">Estado</label>
@@ -233,7 +233,7 @@
                             <input type="date" class="form-control" id="editFechaInicio" name="fechaInicio" required />
                         </div>
                         <div class="col-md-6">
-                            <label for="editFechaFin" class="form-label fw-semibold">Fecha de Fin <span class="text-danger">*</span></label>
+                            <label for="editFechaFin" class="form-label fw-semibold">Fecha de Fin (mínimo 1 semana después) <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="editFechaFin" name="fechaFin" required />
                         </div>
                         <div class="col-md-4">
@@ -241,11 +241,11 @@
                             <input type="text" class="form-control" id="editHorario" name="horario" required maxlength="100" />
                         </div>
                         <div class="col-md-3">
-                            <label for="editCupo" class="form-label fw-semibold">Cupo Máximo <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" id="editCupo" name="cupoMaximo" required min="1" max="500" />
+                            <label for="editCupo" class="form-label fw-semibold">Cupo Máximo (> 15) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editCupo" name="cupoMaximo" required min="16" max="500" placeholder="Mínimo 16" />
                         </div>
                         <div class="col-md-5">
-                            <label for="editInstructor" class="form-label fw-semibold">Instructor</label>
+                            <label for="editInstructor" class="form-label fw-semibold">Instructor (IdRol = 2)</label>
                             <select class="form-select" id="editInstructor" name="carnetInstructor">
                                 <option value="">(Sin instructor)</option>
                                 @foreach (var ins in instructores)
@@ -316,6 +316,30 @@
                 document.getElementById('deleteIdCurso').value = button.getAttribute('data-id');
                 document.getElementById('deleteNombreCurso').textContent = button.getAttribute('data-nombre');
             });
+
+            function setMinFechaFin(inicioElem, finElem) {
+                if (!inicioElem.value) return;
+                var d = new Date(inicioElem.value + 'T00:00:00');
+                d.setDate(d.getDate() + 7);
+                var minDate = d.toISOString().split('T')[0];
+                finElem.min = minDate;
+                if (finElem.value && finElem.value < minDate) {
+                    finElem.value = minDate;
+                }
+            }
+
+            var cInicio = document.getElementById('createFechaInicio');
+            var cFin = document.getElementById('createFechaFin');
+            if (cInicio && cFin) {
+                cInicio.addEventListener('change', function() { setMinFechaFin(cInicio, cFin); });
+            }
+
+            var eInicio = document.getElementById('editFechaInicio');
+            var eFin = document.getElementById('editFechaFin');
+            if (eInicio && eFin) {
+                eInicio.addEventListener('change', function() { setMinFechaFin(eInicio, eFin); });
+                modalEditar.addEventListener('shown.bs.modal', function() { setMinFechaFin(eInicio, eFin); });
+            }
 
 
         });

@@ -83,6 +83,12 @@ namespace SIGALE_Web_App.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (fechaSolicitud.HasValue && fechaSolicitud.Value.Date > DateTime.Today)
+            {
+                TempData["ErrorMessage"] = "La fecha de solicitud no puede ser posterior a la fecha actual.";
+                return RedirectToAction(nameof(Index));
+            }
+
             try
             {
                 using var connection = new SqlConnection(_connectionString);
@@ -118,6 +124,12 @@ namespace SIGALE_Web_App.Controllers
             if (idMembresia <= 0 || string.IsNullOrWhiteSpace(carnet) || idAsociacion <= 0)
             {
                 TempData["ErrorMessage"] = "Datos incompletos para actualizar la membresía.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (fechaSolicitud.HasValue && fechaSolicitud.Value.Date > DateTime.Today)
+            {
+                TempData["ErrorMessage"] = "La fecha de solicitud no puede ser posterior a la fecha actual.";
                 return RedirectToAction(nameof(Index));
             }
 

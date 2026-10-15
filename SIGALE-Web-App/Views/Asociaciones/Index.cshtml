@@ -120,15 +120,15 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label for="createAcronimo" class="form-label fw-semibold">Acrónimo <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="createAcronimo" name="acronimo" required maxlength="20" placeholder="Ej. ACM, IEEE..." />
+                            <input type="text" class="form-control" id="createAcronimo" name="acronimo" required minlength="4" maxlength="20" placeholder="Ej. ACMS, IEEE..." />
                         </div>
                         <div class="col-md-8">
                             <label for="createNombre" class="form-label fw-semibold">Nombre Completo <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="createNombre" name="nombre" required maxlength="200" placeholder="Ej. Asociación de Computación y Maquinaria" />
+                            <input type="text" class="form-control" id="createNombre" name="nombre" required minlength="5" maxlength="200" placeholder="Ej. Asociación de Computación y Maquinaria" />
                         </div>
                         <div class="col-md-4">
-                            <label for="createAnio" class="form-label fw-semibold">Año de Fundación</label>
-                            <input type="number" class="form-control" id="createAnio" name="anioFundacion" min="1900" max="2100" placeholder="Ej. 2018" />
+                            <label for="createAnio" class="form-label fw-semibold">Año de Fundación <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="createAnio" name="anioFundacion" required min="1900" max="@DateTime.Now.Year" placeholder="Ej. 2018" />
                         </div>
                         <div class="col-md-8">
                             <label for="createFormulario" class="form-label fw-semibold">URL Formulario</label>
@@ -168,15 +168,15 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label for="editAcronimo" class="form-label fw-semibold">Acrónimo <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editAcronimo" name="acronimo" required maxlength="20" />
+                            <input type="text" class="form-control" id="editAcronimo" name="acronimo" required minlength="4" maxlength="20" />
                         </div>
                         <div class="col-md-8">
                             <label for="editNombre" class="form-label fw-semibold">Nombre Completo <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editNombre" name="nombre" required maxlength="200" />
+                            <input type="text" class="form-control" id="editNombre" name="nombre" required minlength="5" maxlength="200" />
                         </div>
                         <div class="col-md-4">
-                            <label for="editAnio" class="form-label fw-semibold">Año de Fundación</label>
-                            <input type="number" class="form-control" id="editAnio" name="anioFundacion" min="1900" max="2100" />
+                            <label for="editAnio" class="form-label fw-semibold">Año de Fundación <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editAnio" name="anioFundacion" required min="1900" max="@DateTime.Now.Year" />
                         </div>
                         <div class="col-md-8">
                             <label for="editFormulario" class="form-label fw-semibold">URL Formulario</label>

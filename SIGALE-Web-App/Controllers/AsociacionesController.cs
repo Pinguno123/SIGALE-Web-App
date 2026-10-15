@@ -59,9 +59,28 @@ namespace SIGALE_Web_App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string acronimo, string nombre, int? anioFundacion, string? descripcion, string? formulario, string? imgUrl)
         {
-            if (string.IsNullOrWhiteSpace(acronimo) || string.IsNullOrWhiteSpace(nombre))
+            if (string.IsNullOrWhiteSpace(acronimo) || string.IsNullOrWhiteSpace(nombre) || !anioFundacion.HasValue)
             {
-                TempData["ErrorMessage"] = "Acrónimo y Nombre son requeridos.";
+                TempData["ErrorMessage"] = "Acrónimo, Nombre y Año de Fundación son obligatorios.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (acronimo.Trim().Length < 4)
+            {
+                TempData["ErrorMessage"] = "El acrónimo de la asociación debe tener al menos 4 caracteres.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (nombre.Trim().Length < 5)
+            {
+                TempData["ErrorMessage"] = "El nombre de la asociación debe tener al menos 5 caracteres.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            int anioActual = DateTime.Now.Year;
+            if (anioFundacion.Value < 1900 || anioFundacion.Value > anioActual)
+            {
+                TempData["ErrorMessage"] = $"El año de fundación debe estar entre 1900 y el año actual ({anioActual}).";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -77,7 +96,7 @@ namespace SIGALE_Web_App.Controllers
                 using var command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Acronimo", acronimo.Trim());
                 command.Parameters.AddWithValue("@Nombre", nombre.Trim());
-                command.Parameters.AddWithValue("@AnioFundacion", (object?)anioFundacion ?? DBNull.Value);
+                command.Parameters.AddWithValue("@AnioFundacion", anioFundacion.Value);
                 command.Parameters.AddWithValue("@Descripcion", (object?)descripcion?.Trim() ?? DBNull.Value);
                 command.Parameters.AddWithValue("@Formulario", (object?)formulario?.Trim() ?? DBNull.Value);
                 command.Parameters.AddWithValue("@ImgUrl", (object?)imgUrl?.Trim() ?? DBNull.Value);
@@ -98,9 +117,28 @@ namespace SIGALE_Web_App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int idAsociacion, string acronimo, string nombre, int? anioFundacion, string? descripcion, string? formulario, string? imgUrl)
         {
-            if (string.IsNullOrWhiteSpace(acronimo) || string.IsNullOrWhiteSpace(nombre))
+            if (idAsociacion <= 0 || string.IsNullOrWhiteSpace(acronimo) || string.IsNullOrWhiteSpace(nombre) || !anioFundacion.HasValue)
             {
-                TempData["ErrorMessage"] = "Acrónimo y Nombre son requeridos.";
+                TempData["ErrorMessage"] = "Acrónimo, Nombre y Año de Fundación son obligatorios.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (acronimo.Trim().Length < 4)
+            {
+                TempData["ErrorMessage"] = "El acrónimo de la asociación debe tener al menos 4 caracteres.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (nombre.Trim().Length < 5)
+            {
+                TempData["ErrorMessage"] = "El nombre de la asociación debe tener al menos 5 caracteres.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            int anioActual = DateTime.Now.Year;
+            if (anioFundacion.Value < 1900 || anioFundacion.Value > anioActual)
+            {
+                TempData["ErrorMessage"] = $"El año de fundación debe estar entre 1900 y el año actual ({anioActual}).";
                 return RedirectToAction(nameof(Index));
             }
 
